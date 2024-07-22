@@ -8,13 +8,34 @@ import Signup from './components/signup/Signup';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { login } from './redux/functions/auth';
+import supabase from './supabase/supabase';
+import { checkedItems } from './redux/functions/checked';
 
 function App() {
   const dispatch = useDispatch()
+
   useEffect(() => {
-    if (JSON.parse(localStorage.getItem('user'))) {
-      dispatch(login(JSON.parse(localStorage.getItem('user'))))
+    async function fetchData() {
+      const storedUser = JSON.parse(localStorage.getItem('user'))
+      if (storedUser) {
+        console.log(storedUser);
+        dispatch(login(storedUser))
+        try {
+          const { data, error } = await supabase
+            .from('category')
+            .select()
+            .eq('user_id', storedUser.user_id)
+          dispatch(checkedItems(data))
+          if (error) {
+            throw error;
+          }
+          console.log(data);
+        } catch (error) {
+          console.log(error);
+        }
+      }
     }
+    return () => fetchData()
   }, [])
 
   const router = createBrowserRouter([

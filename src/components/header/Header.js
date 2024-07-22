@@ -4,12 +4,10 @@ import Banner from '../banner/Banner'
 import { useDispatch, useSelector } from 'react-redux'
 import sliceString from '../../function/sliceString'
 import { logout } from '../../redux/functions/auth'
-import { useNavigate } from 'react-router-dom'
 
 function Header() {
     const { user } = useSelector(state => state.authSlice)
     const dispatch = useDispatch()
-    // const navigate = useNavigate()
 
     const logoutBtn = (e) => {
         e.preventDefault()
