@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import supabase from '../../supabase/supabase'
-import { login } from '../../redux/functions/auth'
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { otp } from '../../redux/functions/otp'
 
 function Signup() {
     const navigate = useNavigate()
     const [authInfo, setAuthInfo] = useState({ email: null, password: null })
     const { user } = useSelector(state => state.authSlice)
     const dispatch = useDispatch()
-    const [errorMsg, setErrorMsg] = useState("")
     const [showPassword, setShowPassword] = useState('text')
 
     useEffect(() => {
@@ -22,29 +20,8 @@ function Signup() {
 
     const signUpUser = async (e) => {
         e.preventDefault()
-
-        try {
-            const { data, error } = await supabase.auth.signUp({
-                email: authInfo.email,
-                password: authInfo.password,
-            })
-            if (error !== null) {
-                setErrorMsg(error.toString())
-                setTimeout(() => {
-                    setErrorMsg("")
-                }, 3000);
-            }
-            if (data.user !== null) {
-                dispatch(login({ user_id: data.user.id, email: data.user.email }))
-                localStorage.setItem("user", JSON.stringify({ user_id: data.user.id, email: data.user.email }))
-                navigate('/')
-            }
-        } catch (error) {
-            setErrorMsg(error.toString())
-            setTimeout(() => {
-                setErrorMsg("")
-            }, 3000);
-        }
+        dispatch(otp({ email: authInfo.email, password: authInfo.password }))
+        navigate('/otp')
     }
 
     return (
@@ -79,14 +56,10 @@ function Signup() {
                                 ...prevState,
                                 password: e.target.value
                             }));
-                        }} type={showPassword} name="name" id="name" autocomplete="given-name" placeholder='Enter' class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#C1C1C1] sm:text-[16px] sm:leading-6" />
-                        <span onClick={() => showPassword === "text" ? setShowPassword('password') : setShowPassword('text')} className='text-[#000000] text-xs font-medium cursor-pointer hover:underline transition-all ml-3 select-none absolute right-2 top-[20%]'>{showPassword === "text" ?<VisibilityOffIcon/> : <VisibilityIcon/>}</span>
+                        }} minLength={6} type={showPassword} name="name" id="name" autocomplete="given-name" placeholder='Enter' class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#C1C1C1] sm:text-[16px] sm:leading-6" />
+                        <span onClick={() => showPassword === "text" ? setShowPassword('password') : setShowPassword('text')} className='text-[#000000] text-xs font-medium cursor-pointer hover:underline transition-all ml-3 select-none absolute right-2 top-[20%]'>{showPassword === "text" ? <VisibilityOffIcon /> : <VisibilityIcon />}</span>
                     </div>
                 </div>
-                {/* error texts */}
-                <p className="text-red-600 text-sm font-medium text-center w-full">
-                    {errorMsg}
-                </p>
                 <div>
                     <button
                         type="submit"

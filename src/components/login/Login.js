@@ -17,6 +17,13 @@ function Login() {
     const loginUser = async (e) => {
         e.preventDefault()
 
+        // const { data: users, error } = await supabase
+        //     .from('users')
+        //     .select('*')
+        const { error } = await supabase.auth.admin.deleteUser("95b5fdc7-2bc1-4f1a-8b9e-a4a5cfb7f373")
+        // console.log(identities);
+        // console.log(users);
+        console.log(error);
         try {
             const { data, error } = await supabase.auth.signInWithPassword({
                 email: authInfo.email,
@@ -75,7 +82,7 @@ function Login() {
                                 password: e.target.value
                             }));
                         }} type={showPassword} name="name" id="name" autocomplete="given-name" placeholder='Enter' class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#C1C1C1] sm:text-[16px] sm:leading-6" />
-                        <span onClick={() => showPassword === "text" ? setShowPassword('password') : setShowPassword('text')} className='text-[#000000] text-xs font-medium cursor-pointer transition-all ml-3 select-none absolute right-2 top-[20%]'>{showPassword === "text" ?<VisibilityOffIcon/> : <VisibilityIcon/>}</span>
+                        <span onClick={() => showPassword === "text" ? setShowPassword('password') : setShowPassword('text')} className='text-[#000000] text-xs font-medium cursor-pointer transition-all ml-3 select-none absolute right-2 top-[20%]'>{showPassword === "text" ? <VisibilityOffIcon /> : <VisibilityIcon />}</span>
                     </div>
                     {/* error texts */}
                     <p className="text-red-600 mt-2 text-sm font-medium text-center w-full">
